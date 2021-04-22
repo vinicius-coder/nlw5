@@ -10,12 +10,12 @@ import { RectButton, RectButtonProps } from 'react-native-gesture-handler';
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 
-interface EnviromentButtonProps extends RectButtonProps {
+interface EnvironmentButtonProps extends RectButtonProps {
     title: string;
     active?: boolean;
 }
 
-export function EnviromentButton({ title, active = false, ...rest }: EnviromentButtonProps) {
+export function EnvironmentButton({ title, active = false, ...rest }: EnvironmentButtonProps) {
 
     return (
         <RectButton
@@ -45,7 +45,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 12,
-        marginRight: 5
+        marginHorizontal: 5,
+
     },
 
     containerActive: {
