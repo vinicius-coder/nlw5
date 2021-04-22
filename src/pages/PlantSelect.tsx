@@ -45,7 +45,6 @@ export function PlantSelect() {
 
     const [page, setPage] = useState(1);
     const [loadingMore, setLoadingMore] = useState(false);
-    const [loadedAll, setLoadedAll] = useState(false);
 
     function handleEnvironmentSelected(environment: string) {
 
@@ -133,6 +132,7 @@ export function PlantSelect() {
             <View>
                 <FlatList
                     data={environments}
+                    keyExtractor={(item)=>String(item.key)}
                     renderItem={({ item }) => (
                         <EnvironmentButton
                             title={item.title}
