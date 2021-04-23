@@ -11,10 +11,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SvgFromUri } from 'react-native-svg';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import DateTimePicker, { Event } from '@react-native-community/datetimepicker';
 import { format, isBefore } from 'date-fns';
-import { loadPlant, PlantProps, savePlant } from '../libs/storage';
+import { PlantProps, savePlant } from '../libs/storage';
 
 import { Button } from '../components/Button';
 
@@ -22,7 +22,6 @@ import waterdrop from '../assets/waterdrop.png';
 
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
-import { useEffect } from 'react';
 
 interface Params {
     plant: PlantProps;
@@ -35,6 +34,8 @@ export function PlantSave() {
 
     const route = useRoute();
     const { plant } = route.params as Params;
+
+    const navigation = useNavigation();
 
     function handleChangeTime(event: Event, dateTime: Date | undefined) {
 
@@ -60,12 +61,20 @@ export function PlantSave() {
     }
 
     async function handleSave() {
-        
+
         try {
 
             await savePlant({
                 ...plant,
                 dateTimeNotification: selectedDataTime
+            });
+
+            navigation.navigate('Confirmation',{
+                title: 'Tudo certo',
+                subTitle: 'Fique tranquilo que sempre vamos lembrar você de cuidar da sua plantinha com muito cuidado.',
+                buttonTitle: 'Muito obrigado',
+                icon: 'hug',
+                nextScreen: 'MyPlants'
             });
 
         } catch (error) {
