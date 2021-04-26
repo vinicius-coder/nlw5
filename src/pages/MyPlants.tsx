@@ -1,25 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Image, Text } from 'react-native';
+import { StyleSheet, View, Image, Text, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlatList } from 'react-native-gesture-handler';
 import { pt } from 'date-fns/locale';
-import { loadPlant, PlantProps } from '../libs/storage';
+import { loadPlant, PlantProps, removePlants } from '../libs/storage';
 import { formatDistance } from 'date-fns/esm';
 
 import { Header } from '../components/Header';
 import { PlantCardSecondary } from '../components/PlantCardSecondary';
+import { Load } from '../components/Load';
 
 import waterdrop from '../assets/waterdrop.png';
 
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
-import { getBottomSpace, getStatusBarHeight } from 'react-native-iphone-x-helper';
 
 export function MyPlants() {
 
     const [myPlants, setMyPlants] = useState<PlantProps[]>([]);
     const [loading, setLoading] = useState(true);
     const [nextWaterd, setNextWaterd] = useState<string>();
+
+    function handleRemove(plant: PlantProps) {
+
+        Alert.alert("Remover", `Deseja remover a ${plant.name} da sua lista?`, [
+            {
+                text: 'Não',
+                style: 'cancel'
+            },
+            {
+                text: 'Sim',
+                onPress: async () => {
+                    try {
+                        await removePlants(plant.id);
+                        setMyPlants((oldData) => 
+                            oldData.filter((item) => item.id !== plant.id)
+                        );
+                    } catch (error) {
+                        Alert.alert('Erro', 'Não foi possível remover.')
+                    }
+                },
+            }
+        ])
+
+    }
 
     useEffect(() => {
 
@@ -43,6 +67,9 @@ export function MyPlants() {
         loadStorageData();
 
     }, []);
+
+    if (loading)
+        return <Load />
 
     return (
         <SafeAreaView style={styles.container}>
@@ -68,7 +95,10 @@ export function MyPlants() {
                     data={myPlants}
                     keyExtractor={(item) => String(item.id)}
                     renderItem={({ item }) => (
-                        <PlantCardSecondary data={item} />
+                        <PlantCardSecondary
+                            data={item}
+                            handleRemove={() => { handleRemove(item) }}
+                        />
                     )}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingVertical: 10 }}
